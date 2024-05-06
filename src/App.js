@@ -8,7 +8,7 @@ import { collection, onSnapshot } from 'firebase/firestore';
 
 function App() {
 
-  // State variable to hold fish choices
+  // State variable to hold fish choices fro autocomplete
   const [fishChoices, setFishChoices] = useState([]);
 
   useEffect(
@@ -20,7 +20,6 @@ function App() {
       ),
     []
   );
-
 
   return (
     <div className="App">
