@@ -23,7 +23,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Fish App..</h1>
+      <h1>My Fish App</h1>
       <Autocomplete
         disablePortal
         id="combo-box-demo"
