@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "/fish-app/static/css/main.45cf31c1.css",
-    "main.js": "/fish-app/static/js/main.cfe82e09.js",
+    "main.css": "/fish-app/static/css/main.3747f650.css",
+    "main.js": "/fish-app/static/js/main.fcf140dd.js",
     "static/js/453.3eada00e.chunk.js": "/fish-app/static/js/453.3eada00e.chunk.js",
     "static/media/fish.png": "/fish-app/static/media/fish.6beaac8c358c45835e3b.png",
     "index.html": "/fish-app/index.html",
-    "main.45cf31c1.css.map": "/fish-app/static/css/main.45cf31c1.css.map",
-    "main.cfe82e09.js.map": "/fish-app/static/js/main.cfe82e09.js.map",
+    "main.3747f650.css.map": "/fish-app/static/css/main.3747f650.css.map",
+    "main.fcf140dd.js.map": "/fish-app/static/js/main.fcf140dd.js.map",
     "453.3eada00e.chunk.js.map": "/fish-app/static/js/453.3eada00e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.45cf31c1.css",
-    "static/js/main.cfe82e09.js"
+    "static/css/main.3747f650.css",
+    "static/js/main.fcf140dd.js"
   ]
 }
