@@ -30,14 +30,43 @@ function Home({user}) {
   const [fishChoices, setFishChoices] = useState([]);
   const [fishInTank, setFishInTank] = useState([]);
   const [selectedFish, setSelectedFish] = useState([]);
-  const [tankErrors, setTankErrors] = useState([])
+  const [tankErrors, setTankErrors] = useState([]);
   const [dense, setDense] = useState(false);
   const [tankSize, setTankSize] = useState(80);
   const [totalCmOfFish, setTotalCmOfFish] = useState(0);
+  const [pHOfTank , setPhOfTank] = useState(7.2);
+  const [tempOfTank , setTempOfTank] = useState(25);
+  const [nitrite, setNitrite] = useState(0);
+  const [nitrate, setNitrate] = useState(0);
+  const [gH, setGh] = useState(30);
+  const [kH, setKh] = useState(80);
   const db = getFireStore;
 
   //https://m.media-amazon.com/images/I/71qjPIbMHSL._AC_UF894,1000_QL80_.jpg
-  const marks = [
+    const tempMarks = [
+    {
+      value: 10,
+      label: '10°C',
+    },
+    {
+      value: 15,
+      label: '15°C',
+    },
+    {
+      value: 20,
+      label: '20°C',
+    },
+    {
+      value: 25,
+      label: '25°C',
+    },
+    {
+      value: 30,
+      label: '30°C',
+    },
+  ];
+  
+  const pHMarks = [
     {
       value: 6.4,
       label: '6.4',
@@ -63,10 +92,110 @@ function Home({user}) {
       label: '8.4',
     },
   ];
-  
-  function valuetext(value) {
-    return value;
-  }
+
+  const nitriteMarks = [
+    {
+      value: 0,
+      label: '0',
+    },
+    {
+      value: 0.5,
+      label: '0.5',
+    },
+    {
+      value: 1.0,
+      label: '1.0',
+    },
+    {
+      value: 3.0,
+      label: '3.0',
+    },
+    {
+      value: 5.0,
+      label: '5.0',
+    },
+    {
+      value: 10.0,
+      label: '10.0',
+    },
+  ];
+
+  const nitrateMarks = [
+    {
+      value: 0,
+      label: '0',
+    },
+    {
+      value: 20,
+      label: '20',
+    },
+    {
+      value: 40,
+      label: '40',
+    },
+    {
+      value: 80,
+      label: '80',
+    },
+    {
+      value: 160,
+      label: '160',
+    },
+    {
+      value: 200,
+      label: '200',
+    },
+  ];
+
+  const gHMarks = [
+    {
+      value: 0,
+      label: '0',
+    },
+    {
+      value: 30,
+      label: '30',
+    },
+    {
+      value: 60,
+      label: '60',
+    },
+    {
+      value: 120,
+      label: '120',
+    },
+    {
+      value: 180,
+      label: '180',
+    }
+  ];
+
+  const kHMarks = [
+    {
+      value: 0,
+      label: '0',
+    },
+    {
+      value: 40,
+      label: '40',
+    },
+    {
+      value: 80,
+      label: '80',
+    },
+    {
+      value: 120,
+      label: '120',
+    },
+    {
+      value: 180,
+      label: '180',
+    },
+    {
+      value: 240,
+      label: '240',
+    },
+  ];
 
   const handleFishChange = (event, value) => {
     if (value) {
@@ -74,8 +203,44 @@ function Home({user}) {
     } else {
       setSelectedFish(null);
     }
+  };
 
+  const pHChange = (event, value) => {
+    if (value) {
+      setPhOfTank(value);
+    } else {
+      setPhOfTank(null);
+    }
+  };
 
+  const nitriteChange = (event, value) => {
+    if (value) {
+      setNitrite(value);
+    }
+  };
+
+  const nitrateChange = (event, value) => {
+    if (value) {
+      setNitrate(value);
+    }
+  };
+
+  const gHChange = (event, value) => {
+    if (value) {
+      setGh(value);
+    }
+  };
+
+  const kHChange = (event, value) => {
+    if (value) {
+      setKh(value);
+    }
+  };
+
+  const temperatureChange = (event, value) => {
+    if (value) {
+      setTempOfTank(value);
+    }
   };
 
   const addToTank = (fishToUpdate, addSubtractValue) => {
@@ -128,22 +293,31 @@ function Home({user}) {
 
   const renderListItem = (props, option) => {
 
-    let compatibleWarning = "";
+    let fishIsCompatible = false;
 
     ////Check fish compatibility
     fishInTank.forEach(fishToCompare => {
 
-      const notCompatibleWith = fishToCompare.notCompatibleWith;
+      const compatibleWith = fishToCompare.compatibleWith;
 
-      if (notCompatibleWith.includes(option.name)) {
-        compatibleWarning = "not compatible"
+      if (compatibleWith.includes(option.name)) {
+        fishIsCompatible = true;
       }
 
     });
 
     return (
-      <li {...props} key={option.uuid}>
-        {option.name} &nbsp;<small>{compatibleWarning}</small>
+      <li {...props} key={option.uuid} style={{paddingTop: '15px', paddingBottom: '5px', paddingLeft: '10px'}}>
+        <span style={{paddingRight: '10px'}}>
+          {fishIsCompatible ?
+             <Badge badgeContent='✔' color='success'>
+              <Avatar alt={option.name} src={option.imgSrc}></Avatar>
+            </Badge>
+            :
+            <Avatar alt={option.name} src={option.imgSrc}></Avatar>
+          }
+        </span>
+        {option.name}  
       </li>
     );
   }
@@ -179,6 +353,26 @@ function Home({user}) {
         updatedTankErrors.push({severity: 'error', message: `You cannot have more than ${f.maximumGroupSize} ${f.name} fish in your tank.`});
       }
 
+      //Check min pH
+      if (pHOfTank < f.minPh) {
+        updatedTankErrors.push({severity: 'error', message: `Your water should be a minimum of ${f.minPh} pH for your ${f.name} fish`});
+      }
+
+      //Check max pH
+      if (pHOfTank > f.maxPh) {
+        updatedTankErrors.push({severity: 'error', message: `Your water should be a maximum of ${f.maxPh} pH for your ${f.name} fish`});
+      }
+
+      //Check min temp
+      if (tempOfTank < f.tempMin) {
+        updatedTankErrors.push({severity: 'error', message: `Your tank should be a minimum of ${f.tempMin} °C for your ${f.name} fish`});
+      }
+
+      //Check max temp
+      if (tempOfTank > f.tempMax) {
+        updatedTankErrors.push({severity: 'error', message: `Your tank should be a maximum of ${f.tempMax} °C for your ${f.name} fish`});
+      }
+
       ////Check fish compatibility
       fishInTank.forEach(fishToCompare => {
 
@@ -204,13 +398,33 @@ function Home({user}) {
     if (tankSize < newTotalCmOfFish) {
       updatedTankErrors.push({severity: 'error', message: `You have ${Math.round(newTotalCmOfFish - tankSize)}cm of fish too much for your ${tankSize}L tank.`});
     }
+
+    //Check nitrite
+    if (nitrite > 0) {
+      updatedTankErrors.push({severity: 'error', message: `Nitrite levels above 0.5 are dangerous to your fish and may require partial water changes.`});
+    }
+
+    //Check nitrate
+    if (nitrate > 40) {
+      updatedTankErrors.push({severity: 'error', message: `Nitrate levels above 40 are dangerous to your fish and may require partial water changes.`});
+    }
+
+    //Check GH
+    if (gH == 0 || gH > 120) {
+      updatedTankErrors.push({severity: 'error', message: `General hardness is not optimum and should be between 30 - 120 GH.`});
+    }
+
+    //Check KH
+    if (kH < 80 || kH > 120) {
+      updatedTankErrors.push({severity: 'error', message: `Carbonate hardness  is not optimum and should be between 80 - 120 KH.`});
+    }
+
+
+    ////Check tank substrate
+
     setTotalCmOfFish(newTotalCmOfFish);
-
-    //Check tank pH
-    //Check tank substrate
-
     setTankErrors(updatedTankErrors);
-  }, [fishInTank, tankSize]);
+  }, [fishInTank, tankSize, tempOfTank, pHOfTank, nitrite, nitrate, gH, kH]);
 
 
   return (
@@ -269,6 +483,7 @@ function Home({user}) {
           {fishInTank && fishInTank.map((value) => (
                   <ListItem
                     key={value.name}
+                    style={{width: "475px"}}
                     secondaryAction={
                       <>
                       <IconButton edge="end" aria-label="add" onClick={() => addToTank(value, 1)}>
@@ -293,7 +508,7 @@ function Home({user}) {
                     <ListItemAvatar>
                     <Badge badgeContent={value.count} color="primary">
                       <Avatar alt={value.name} src={value.imgSrc}></Avatar>
-                      </Badge>
+                    </Badge>
                     </ListItemAvatar>
                     <ListItemText
                       primary={value.name}
@@ -303,36 +518,88 @@ function Home({user}) {
             ))}
           </List>
 
-          
           <Box sx={{ width: 300, marginTop: '3rem' }}>
+            <p>Water temperature - <strong>{tempOfTank} °C</strong></p>
             <Slider
               aria-label="Always visible"
-              defaultValue={6.4}
-              getAriaValueText={valuetext}
-              step={null}
-              min={6.4}
-              max={8.4}
-              marks={marks}
-              valueLabelDisplay="on"
+              defaultValue={25}
+              step={1}
+              min={10}
+              max={30}
+              marks={tempMarks}
+              onChange={temperatureChange}
             />
           </Box>
 
+          <Box sx={{ width: 300, marginTop: '3rem' }}>
+            <p>pH level of water - <strong>{pHOfTank} pH</strong></p>
+            <Slider
+              aria-label="Always visible"
+              defaultValue={6.4}
+              step={0.1}
+              min={6.4}
+              max={8.4}
+              marks={pHMarks}
+              onChange={pHChange}
+            />
+          </Box>
+
+          <Box sx={{ width: 300, marginTop: '3rem' }}>
+            <p>Nitrite level of water - <strong>{nitrite} NO2</strong></p>
+            <Slider
+              aria-label="Always visible"
+              defaultValue={0}
+              step={0.5}
+              min={0}
+              max={10.0}
+              marks={nitriteMarks}
+              onChange={nitriteChange}
+            />
+          </Box>
+
+          <Box sx={{ width: 300, marginTop: '3rem' }}>
+            <p>Nitrate level of water - <strong>{nitrate} NO3</strong></p>
+            <Slider
+              aria-label="Always visible"
+              defaultValue={0}
+              step={null}
+              min={0}
+              max={200}
+              marks={nitrateMarks}
+              onChange={nitrateChange}
+            />
+          </Box>
+
+          <Box sx={{ width: 300, marginTop: '3rem' }}>
+            <p>General Hardness of water - <strong>{gH} GH</strong></p>
+            <Slider
+              aria-label="Always visible"
+              defaultValue={30}
+              step={null}
+              min={0}
+              max={180}
+              marks={gHMarks}
+              onChange={gHChange}
+            />
+          </Box>
+
+          <Box sx={{ width: 300, marginTop: '3rem' }}>
+            <p>Carbonate Hardness of water - <strong>{kH} KH</strong></p>
+            <Slider
+              aria-label="Always visible"
+              defaultValue={80}
+              step={null}
+              min={0}
+              max={240}
+              marks={kHMarks}
+              onChange={kHChange}
+            />
+          </Box>
+
+        {/* https://1043140.app.netsuite.com/core/media/media.nl?id=510780&c=1043140&h=2dd845a564be718b9044&_xt=.pdf */}
 
         </form>
-        {/* <header className="Home-header">
-          <img src={fish} className="Home-logo" alt="logo" />
-          <p>
-            Lots of fishes coming soon...
-          </p>
-          <a
-            className="Home-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            My Fish App! v1.2
-          </a>
-        </header> */}
+
 
       </div>
       
