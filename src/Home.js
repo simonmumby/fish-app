@@ -110,14 +110,14 @@ function Home({user}) {
       value: 3.0,
       label: '3.0',
     },
-    {
-      value: 5.0,
-      label: '5.0',
-    },
-    {
-      value: 10.0,
-      label: '10.0',
-    },
+    // {
+    //   value: 5.0,
+    //   label: '5.0',
+    // },
+    // {
+    //   value: 10.0,
+    //   label: '10.0',
+    // },
   ];
 
   const nitrateMarks = [
@@ -206,41 +206,27 @@ function Home({user}) {
   };
 
   const pHChange = (event, value) => {
-    if (value) {
-      setPhOfTank(value);
-    } else {
-      setPhOfTank(null);
-    }
+    setPhOfTank(value);
   };
 
   const nitriteChange = (event, value) => {
-    if (value) {
-      setNitrite(value);
-    }
+    setNitrite(value);
   };
 
   const nitrateChange = (event, value) => {
-    if (value) {
-      setNitrate(value);
-    }
+    setNitrate(value);
   };
 
   const gHChange = (event, value) => {
-    if (value) {
-      setGh(value);
-    }
+    setGh(value);
   };
 
   const kHChange = (event, value) => {
-    if (value) {
-      setKh(value);
-    }
+    setKh(value);
   };
 
   const temperatureChange = (event, value) => {
-    if (value) {
-      setTempOfTank(value);
-    }
+    setTempOfTank(value);
   };
 
   const addToTank = (fishToUpdate, addSubtractValue) => {
@@ -327,6 +313,7 @@ function Home({user}) {
     () =>
       onSnapshot(collection(db, "compatibilityRules"), (snapshot) => {
         const compatibilityRules = snapshot.docs.map((doc) => doc.data());
+        console.info(compatibilityRules);
         setFishChoices(compatibilityRules.map(fish => ({ label: fish.name, ...fish })))
       }
       ),
@@ -401,12 +388,12 @@ function Home({user}) {
 
     //Check nitrite
     if (nitrite > 0) {
-      updatedTankErrors.push({severity: 'error', message: `Nitrite levels above 0.5 are dangerous to your fish and may require partial water changes.`});
+      updatedTankErrors.push({severity: 'error', message: `Nitrite levels above 0.5 are dangerous to your fish.`});
     }
 
     //Check nitrate
     if (nitrate > 40) {
-      updatedTankErrors.push({severity: 'error', message: `Nitrate levels above 40 are dangerous to your fish and may require partial water changes.`});
+      updatedTankErrors.push({severity: 'error', message: `Nitrate levels above 40 are dangerous to your fish.`});
     }
 
     //Check GH
@@ -551,7 +538,7 @@ function Home({user}) {
               defaultValue={0}
               step={0.5}
               min={0}
-              max={10.0}
+              max={3.0}
               marks={nitriteMarks}
               onChange={nitriteChange}
             />
