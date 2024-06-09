@@ -1,4 +1,4 @@
-const compatibilityRules = [
+const compatibilityRulesDummyData = [
   {
       "adultSizeCm": 6,
       "shortDesc": "Aggressive, elegant, long-finned fighter.",
@@ -66,4 +66,4 @@ const compatibilityRules = [
       "adultSizeCm": 7.6
   }
 ]
-export default compatibilityRules;
+export default compatibilityRulesDummyData; 

@@ -38,16 +38,3 @@
 }
 
 
-.Home {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.grid-container {
-  display: grid;
-  gap: 1rem;
-  justify-items: center;
-  align-items: center;
-}
