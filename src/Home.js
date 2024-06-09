@@ -14,7 +14,8 @@ import {
   IconButton,
   Grid,
   Alert,
-  Stack
+  Stack,
+  Snackbar
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -67,6 +68,20 @@ function Home({user}) {
   const [gH, setGh] = useState(30);
   const [kH, setKh] = useState(80);
   const db = getFireStore;
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
 
   const handleFishChange = (event, value) => {
@@ -227,8 +242,20 @@ function Home({user}) {
 
 
   return (
-    <div className="container">
+    <>
+       {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          onClose={handleClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          This is a success Alert inside a Snackbar..
+        </Alert>
+      </Snackbar> */}
 
+      <div className="container">
   <div class="logo-container">
       <img src={logoSrc} alt="Example Image" class="logo-image"/>
       <div class="text">
@@ -238,6 +265,8 @@ function Home({user}) {
     </div>
 
     <div className="grid-container">
+
+
       {/* <h2>Welcome {user.displayName}!</h2> */}
       <div class="grid-item">
         <form>
@@ -249,6 +278,7 @@ function Home({user}) {
     ))}
   </Stack>
 
+  {/* <Button onClick={handleClick}>Open Snackbar</Button> */}
   <div>
   <label>Search to add fish to your tank</label>
   <Autocomplete
@@ -407,6 +437,8 @@ function Home({user}) {
       </div>
     </div>
     </div>
+
+    </>
   );
 }
 
