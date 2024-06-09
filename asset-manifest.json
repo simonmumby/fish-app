@@ -1,16 +1,17 @@
 {
   "files": {
-    "main.css": "/fish-app/static/css/main.3747f650.css",
-    "main.js": "/fish-app/static/js/main.fcf140dd.js",
+    "main.css": "/fish-app/static/css/main.e074f26a.css",
+    "main.js": "/fish-app/static/js/main.49450eef.js",
     "static/js/453.3eada00e.chunk.js": "/fish-app/static/js/453.3eada00e.chunk.js",
     "static/media/fish.png": "/fish-app/static/media/fish.6beaac8c358c45835e3b.png",
+    "static/media/appLogo.png": "/fish-app/static/media/appLogo.838bbbfa8e5083e5202d.png",
     "index.html": "/fish-app/index.html",
-    "main.3747f650.css.map": "/fish-app/static/css/main.3747f650.css.map",
-    "main.fcf140dd.js.map": "/fish-app/static/js/main.fcf140dd.js.map",
+    "main.e074f26a.css.map": "/fish-app/static/css/main.e074f26a.css.map",
+    "main.49450eef.js.map": "/fish-app/static/js/main.49450eef.js.map",
     "453.3eada00e.chunk.js.map": "/fish-app/static/js/453.3eada00e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.3747f650.css",
-    "static/js/main.fcf140dd.js"
+    "static/css/main.e074f26a.css",
+    "static/js/main.49450eef.js"
   ]
 }
