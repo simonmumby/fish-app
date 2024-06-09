@@ -233,7 +233,7 @@ function Home({user}) {
       <img src={logoSrc} alt="Example Image" class="logo-image"/>
       <div class="text">
         <h1 class="logoHeading">TankMaster</h1>
-        <h4 class="logoSubheading">Master the art of fishkeeping</h4>
+        <h4 class="logoSubheading">Master the art of fishkeeping.</h4>
       </div>
     </div>
 
