@@ -1,30 +1,54 @@
 import React, { useState, useEffect, cloneElement } from 'react';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import Box from '@mui/material/Box';
-import Slider from '@mui/material/Slider';
-import Button from '@mui/material/Button';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import { Badge } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import Grid from '@mui/material/Grid';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import {
+  TextField,
+  Autocomplete,
+  Box,
+  Slider,
+  Button,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Badge,
+  Avatar,
+  IconButton,
+  Grid,
+  Alert,
+  Stack
+} from '@mui/material';
+import {
+  Delete as DeleteIcon,
+  Add as AddIcon,
+  Remove as RemoveIcon,
+  ErrorOutline as ErrorOutlineIcon,
+  LeakAdd,
+  ErrorOutline
+} from '@mui/icons-material';
 import fish from './fish.png';
 import './Home.css';
 import { getFireStore } from "./firebase";
 import { collection, onSnapshot } from 'firebase/firestore';
-import { ErrorOutline, LeakAdd } from '@mui/icons-material';
-import compatibilityRulesDummyData from './data/compatibilityRulesDummyData'
-import logoSrc from './appLogo.png'
+import compatibilityRulesDummyData from './data/compatibilityRulesDummyData';
+import logoSrc from './appLogo.png';
+import {
+  checkFishSchoolSize,
+  checkTankSize
+} from './utils/tankSizeChecks';
+import { checkPhLevels } from './utils/pHChecks';
+import { checkTempLevels } from './utils/tempChecks';
+import { checkCompatibility } from './utils/compatibilityChecks';
+import { checkNitrite } from './utils/nitriteChecks';
+import { checkNitrate } from './utils/nitrateChecks';
+import { checkKh } from './utils/kHChecks';
+import { checkGh } from './utils/gHChecks';
+import { kHMarks } from './data/kHValues'
+import { pHMarks } from './data/pHValues'
+import { tempMarks } from './data/tempValues'
+import { nitriteMarks } from './data/nitriteValues'
+import { nitrateMarks } from './data/nitrateValues'
+import { gHMarks } from './data/gHValues'
+
+
 
 function Home({user}) {
 
@@ -44,160 +68,6 @@ function Home({user}) {
   const [kH, setKh] = useState(80);
   const db = getFireStore;
 
-  //https://m.media-amazon.com/images/I/71qjPIbMHSL._AC_UF894,1000_QL80_.jpg
-    const tempMarks = [
-    {
-      value: 10,
-      label: '10°C',
-    },
-    {
-      value: 15,
-      label: '15°C',
-    },
-    {
-      value: 20,
-      label: '20°C',
-    },
-    {
-      value: 25,
-      label: '25°C',
-    },
-    {
-      value: 30,
-      label: '30°C',
-    },
-  ];
-  
-  const pHMarks = [
-    {
-      value: 6.4,
-      label: '6.4',
-    },
-    {
-      value: 6.8,
-      label: '6.8',
-    },
-    {
-      value: 7.2,
-      label: '7.2',
-    },
-    {
-      value: 7.8,
-      label: '7.8',
-    },
-    {
-      value: 8.0,
-      label: '8.0',
-    },
-    {
-      value: 8.4,
-      label: '8.4',
-    },
-  ];
-
-  const nitriteMarks = [
-    {
-      value: 0,
-      label: '0',
-    },
-    {
-      value: 0.5,
-      label: '0.5',
-    },
-    {
-      value: 1.0,
-      label: '1.0',
-    },
-    {
-      value: 3.0,
-      label: '3.0',
-    },
-    // {
-    //   value: 5.0,
-    //   label: '5.0',
-    // },
-    // {
-    //   value: 10.0,
-    //   label: '10.0',
-    // },
-  ];
-
-  const nitrateMarks = [
-    {
-      value: 0,
-      label: '0',
-    },
-    {
-      value: 20,
-      label: '20',
-    },
-    {
-      value: 40,
-      label: '40',
-    },
-    {
-      value: 80,
-      label: '80',
-    },
-    {
-      value: 160,
-      label: '160',
-    },
-    {
-      value: 200,
-      label: '200',
-    },
-  ];
-
-  const gHMarks = [
-    {
-      value: 0,
-      label: '0',
-    },
-    {
-      value: 30,
-      label: '30',
-    },
-    {
-      value: 60,
-      label: '60',
-    },
-    {
-      value: 120,
-      label: '120',
-    },
-    {
-      value: 180,
-      label: '180',
-    }
-  ];
-
-  const kHMarks = [
-    {
-      value: 0,
-      label: '0',
-    },
-    {
-      value: 40,
-      label: '40',
-    },
-    {
-      value: 80,
-      label: '80',
-    },
-    {
-      value: 120,
-      label: '120',
-    },
-    {
-      value: 180,
-      label: '180',
-    },
-    {
-      value: 240,
-      label: '240',
-    },
-  ];
 
   const handleFishChange = (event, value) => {
     if (value) {
@@ -330,89 +200,26 @@ function Home({user}) {
     const completedCompatibilityChecks = [];
     let newTotalCmOfFish = 0;
 
-    fishInTank.forEach(f => {
+    fishInTank.forEach(fish => {
+      newTotalCmOfFish += fish.adultSizeCm * fish.count;
 
-      ////Calculate new total cm of fish
-      newTotalCmOfFish = newTotalCmOfFish + (f.adultSizeCm * f.count);
+      //Fish parameter checks
+      checkFishSchoolSize(fish, updatedTankErrors);
+      checkPhLevels(fish, pHOfTank, updatedTankErrors);
+      checkTempLevels(fish, tempOfTank, updatedTankErrors);
 
-      ////Check minimum fish school sizes
-      if (f.count < f.minimumGroupSize) {
-        updatedTankErrors.push({severity: 'warning', message: `You should have a minimum of ${f.minimumGroupSize} ${f.name} fish in your tank.`});
-      }
-
-      ////Check maximum fish school size
-      if (f.count > f.maximumGroupSize) {
-        updatedTankErrors.push({severity: 'error', message: `You cannot have more than ${f.maximumGroupSize} ${f.name} fish in your tank.`});
-      }
-
-      //Check min pH
-      if (pHOfTank < f.minPh) {
-        updatedTankErrors.push({severity: 'error', message: `Your water should be a minimum of ${f.minPh} pH for your ${f.name} fish`});
-      }
-
-      //Check max pH
-      if (pHOfTank > f.maxPh) {
-        updatedTankErrors.push({severity: 'error', message: `Your water should be a maximum of ${f.maxPh} pH for your ${f.name} fish`});
-      }
-
-      //Check min temp
-      if (tempOfTank < f.tempMin) {
-        updatedTankErrors.push({severity: 'error', message: `Your tank should be a minimum of ${f.tempMin} °C for your ${f.name} fish`});
-      }
-
-      //Check max temp
-      if (tempOfTank > f.tempMax) {
-        updatedTankErrors.push({severity: 'error', message: `Your tank should be a maximum of ${f.tempMax} °C for your ${f.name} fish`});
-      }
-
-      ////Check fish compatibility
-      fishInTank.forEach(fishToCompare => {
-
-        const hasBeenCompared = completedCompatibilityChecks.includes(fishToCompare.name);
-
-        //Don't compare the same fish or fish that have already been compared
-        if (f.name === fishToCompare.name || hasBeenCompared) {
-          return;
-        }
-
-        const notCompatibleWith = fishToCompare.notCompatibleWith;
-
-        if (notCompatibleWith.includes(f.name)) {
-          completedCompatibilityChecks.push(f.name);
-          updatedTankErrors.push({severity: 'error', message: `The ${f.name} fish and ${fishToCompare.name} fish are not compatible.`});
-        }
-
-      });
-
+      //Check fish is compatible with all other fish in tank
+      checkCompatibility(fish, fishInTank, completedCompatibilityChecks, updatedTankErrors);
     });
-    
-    ////Check tank size
-    if (tankSize < newTotalCmOfFish) {
-      updatedTankErrors.push({severity: 'error', message: `You have ${Math.round(newTotalCmOfFish - tankSize)}cm of fish too much for your ${tankSize}L tank.`});
-    }
 
-    //Check nitrite
-    if (nitrite > 0) {
-      updatedTankErrors.push({severity: 'error', message: `Nitrite levels above 0.5 are dangerous to your fish.`});
-    }
+    //Tank parameter checks
+    checkTankSize(newTotalCmOfFish, tankSize, updatedTankErrors);
+    checkNitrite(nitrite, updatedTankErrors);
+    checkNitrate(nitrate, updatedTankErrors);
+    checkGh(gH, updatedTankErrors);
+    checkKh(kH, updatedTankErrors);
 
-    //Check nitrate
-    if (nitrate > 40) {
-      updatedTankErrors.push({severity: 'error', message: `Nitrate levels above 40 are dangerous to your fish.`});
-    }
-
-    //Check GH
-    if (gH == 0 || gH > 120) {
-      updatedTankErrors.push({severity: 'error', message: `General hardness is not optimum and should be between 30 - 120 GH.`});
-    }
-
-    //Check KH
-    if (kH < 80 || kH > 120) {
-      updatedTankErrors.push({severity: 'error', message: `Carbonate hardness  is not optimum and should be between 80 - 120 KH.`});
-    }
-
-
-    ////Check tank substrate
+    ////Add to check tank substrate?
 
     setTotalCmOfFish(newTotalCmOfFish);
     setTankErrors(updatedTankErrors);
