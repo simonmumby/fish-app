@@ -292,6 +292,10 @@ function Home({user}) {
     // Calculate total count of fish
     const totalFishCount = fishInTank.reduce((total, fish) => total + fish.count, 0);
 
+    const styleErrorHeading = {
+      ...(tankErrors.length > 0 && { backgroundColor: 'pink' }) // Conditionally add backgroundColor
+    };
+
   return (
     <>
 
@@ -368,7 +372,7 @@ function Home({user}) {
               <ListItem
                 key={value.name}
                 // style={{width: "475px"}}
-                
+
                 secondaryAction={
                   <>
                   <IconButton edge="end" aria-label="add" onClick={() => addToTank(value, 1)}>
@@ -487,15 +491,19 @@ function Home({user}) {
         </AccordionDetails>
       </Accordion>
       <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
-        <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
+        <AccordionSummary aria-controls="panel3d-content" id="panel3d-header" style={styleErrorHeading}>
           <Typography>Issues with your tank ({tankErrors.length})</Typography>
         </AccordionSummary>
         <AccordionDetails>
-        <Stack sx={{ width: '100%', marginBottom: '2.25rem' }} spacing={2}>
-          {tankErrors && tankErrors.map((error) => (
-            <Alert severity={error.severity}>{error.message}</Alert>
-          ))}
-        </Stack>
+        {tankErrors.length > 0 ? 
+          <Stack sx={{ width: '100%', marginBottom: '2.25rem' }} spacing={2}>
+            {tankErrors && tankErrors.map((error) => (
+              <Alert severity={error.severity}>{error.message}</Alert>
+            ))}
+          </Stack>
+        :
+          <p>No issues found with your tank stocking and perameters.</p>
+        }
         </AccordionDetails>
       </Accordion>
   </div>
