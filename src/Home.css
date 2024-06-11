@@ -37,4 +37,13 @@
   }
 }
 
+.accordion-settings {
+  margin: auto;
+  display: block;
+}
+
+.slider-container {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
 

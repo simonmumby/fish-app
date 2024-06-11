@@ -15,8 +15,22 @@ import {
   Grid,
   Alert,
   Stack,
-  Snackbar
+  Snackbar,
+  Accordion,
+  AccordionActions,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
+
+import { styled } from '@mui/material/styles';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import MuiAccordion from '@mui/material/Accordion';
+import MuiAccordionSummary from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+
+
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Delete as DeleteIcon,
   Add as AddIcon,
@@ -48,6 +62,7 @@ import { tempMarks } from './data/tempValues'
 import { nitriteMarks } from './data/nitriteValues'
 import { nitrateMarks } from './data/nitrateValues'
 import { gHMarks } from './data/gHValues'
+import { red } from '@mui/material/colors';
 
 
 
@@ -70,7 +85,6 @@ function Home({user}) {
   const db = getFireStore;
 
   const [open, setOpen] = React.useState(false);
-
   const handleClick = () => {
     setOpen(true);
   };
@@ -84,36 +98,73 @@ function Home({user}) {
   };
 
 
+
+  const [expanded, setExpanded] = useState('panel1');
+
+  const handleChange = (panel) => (event, newExpanded) => {
+    setExpanded(newExpanded ? panel : false);
+  };
+
+
+
+  const Accordion = styled((props) => (
+    <MuiAccordion disableGutters elevation={0} square {...props} />
+  ))(({ theme }) => ({
+    border: `1px solid ${theme.palette.divider}`,
+    '&:not(:last-child)': {
+      borderBottom: 0,
+    },
+    '&::before': {
+      display: 'none',
+    },
+  }));
+  
+  const AccordionSummary = styled((props) => (
+    <MuiAccordionSummary
+      expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+      {...props}
+    />
+  ))(({ theme }) => ({
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? 'rgba(255, 255, 255, .05)'
+        : 'rgba(0, 0, 0, .03)',
+    flexDirection: 'row-reverse',
+    '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+      transform: 'rotate(90deg)',
+    },
+    '& .MuiAccordionSummary-content': {
+      marginLeft: theme.spacing(1),
+    },
+  }));
+  
+  const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(2),
+    borderTop: '1px solid rgba(0, 0, 0, .125)',
+  }));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   const handleFishChange = (event, value) => {
     if (value) {
       setSelectedFish(value);
     } else {
       setSelectedFish(null);
     }
-  };
-
-  const pHChange = (event, value) => {
-    setPhOfTank(value);
-  };
-
-  const nitriteChange = (event, value) => {
-    setNitrite(value);
-  };
-
-  const nitrateChange = (event, value) => {
-    setNitrate(value);
-  };
-
-  const gHChange = (event, value) => {
-    setGh(value);
-  };
-
-  const kHChange = (event, value) => {
-    setKh(value);
-  };
-
-  const temperatureChange = (event, value) => {
-    setTempOfTank(value);
   };
 
   const addToTank = (fishToUpdate, addSubtractValue) => {
@@ -160,9 +211,7 @@ function Home({user}) {
 
   };
 
-  const updateTankSize = (event) => {
-    setTankSize(event.target.value);
-  };
+
 
   const renderListItem = (props, option) => {
 
@@ -240,23 +289,14 @@ function Home({user}) {
     setTankErrors(updatedTankErrors);
   }, [fishInTank, tankSize, tempOfTank, pHOfTank, nitrite, nitrate, gH, kH]);
 
+    // Calculate total count of fish
+    const totalFishCount = fishInTank.reduce((total, fish) => total + fish.count, 0);
 
   return (
     <>
-       {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          onClose={handleClose}
-          severity="success"
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
-          This is a success Alert inside a Snackbar..
-        </Alert>
-      </Snackbar> */}
 
       <div className="container">
-  <div class="logo-container">
+      <div class="logo-container">
       <img src={logoSrc} alt="Example Image" class="logo-image"/>
       <div class="text">
         <h1 class="logoHeading">TankMaster</h1>
@@ -266,44 +306,44 @@ function Home({user}) {
 
     <div className="grid-container">
 
-
-      {/* <h2>Welcome {user.displayName}!</h2> */}
       <div class="grid-item">
         <form>
 
           
-  <Stack sx={{ width: '100%', marginBottom: '2.25rem' }} spacing={2}>
-    {tankErrors && tankErrors.map((error) => (
-      <Alert severity={error.severity}>{error.message}</Alert>
-    ))}
-  </Stack>
 
-  {/* <Button onClick={handleClick}>Open Snackbar</Button> */}
-  <div>
-  <label>Search to add fish to your tank</label>
-  <Autocomplete
-      disablePortal
-      id="combo-box-demo"
-      options={fishChoices}
-      sx={{ width: 300 }}
-      onChange={handleFishChange}
-      renderInput={(params) => <TextField {...params} label="Search for fish..." />}
-      renderOption={(props, option) => renderListItem(props, option)}
-    />
-    
-    <Button variant="contained" color="success" onClick={() => addToTank(selectedFish, 1)}>
-    Add to tank
-  </Button>
-  </div>
+    <h3 style={{textAlign: "center"}}>Welcome back {user.displayName}!</h3>
+
+    <div>
+
+    <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        options={fishChoices}
+        sx={{ width: 300 }}
+        onChange={handleFishChange}
+        renderInput={(params) => <TextField {...params} label="Search for fish..." />}
+        renderOption={(props, option) => renderListItem(props, option)}
+        style={{marginBottom: "1rem"}}
+      />
+      
+      <Button 
+        variant="contained" 
+          color="success"
+          style={{marginBottom: "2.25rem"}} 
+          onClick={() => addToTank(selectedFish, 1)}
+      >
+        Add to tank
+      </Button>
+    </div>
 
   <div>
-  <label>Size of your tank (litres)</label>
+
   <TextField
     id="outlined-number"
     label="Tank size (litres)"
     type="number"
     value={tankSize}
-    onChange={updateTankSize}
+    onChange={(e) => {setTankSize(e.target.value)}}
     style={{marginBottom: "2rem"}}
     InputLabelProps={{
       shrink: true,
@@ -312,128 +352,185 @@ function Home({user}) {
   </div>       
 
 
-  <p>Total cm of fish: {totalCmOfFish}</p>
+  {/* <p>Total cm of fish: {totalCmOfFish}</p> */}
 
-    <Box sx={{ width: 300, marginTop: '3rem' }}>
-      <p>Water temperature - <strong>{tempOfTank} °C</strong></p>
-      <Slider
-        aria-label="Always visible"
-        defaultValue={25}
-        step={1}
-        min={10}
-        max={30}
-        marks={tempMarks}
-        onChange={temperatureChange}
-      />
-    </Box>
 
-    <Box sx={{ width: 300, marginTop: '3rem' }}>
-      <p>pH level of water - <strong>{pHOfTank} pH</strong></p>
-      <Slider
-        aria-label="Always visible"
-        defaultValue={6.4}
-        step={0.1}
-        min={6.4}
-        max={8.4}
-        marks={pHMarks}
-        onChange={pHChange}
-      />
-    </Box>
 
-    <Box sx={{ width: 300, marginTop: '3rem' }}>
-      <p>Nitrite level of water - <strong>{nitrite} NO2</strong></p>
-      <Slider
-        aria-label="Always visible"
-        defaultValue={0}
-        step={0.5}
-        min={0}
-        max={3.0}
-        marks={nitriteMarks}
-        onChange={nitriteChange}
-      />
-    </Box>
+  <div>
+      <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+        <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+          <Typography>Fish in tank ({totalFishCount})</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {totalFishCount > 0 ? 
+            <List dense={dense}>
+            {fishInTank && fishInTank.map((value) => (
+              <ListItem
+                key={value.name}
+                // style={{width: "475px"}}
+                
+                secondaryAction={
+                  <>
+                  <IconButton edge="end" aria-label="add" onClick={() => addToTank(value, 1)}>
+                    <AddIcon />
+                  </IconButton>
 
-    <Box sx={{ width: 300, marginTop: '3rem' }}>
-      <p>Nitrate level of water - <strong>{nitrate} NO3</strong></p>
-      <Slider
-        aria-label="Always visible"
-        defaultValue={0}
-        step={null}
-        min={0}
-        max={200}
-        marks={nitrateMarks}
-        onChange={nitrateChange}
-      />
-    </Box>
+                  <IconButton edge="end" aria-label="remove"  onClick={() => addToTank(value, -1)}>
+                    <RemoveIcon />
+                  </IconButton>
 
-    <Box sx={{ width: 300, marginTop: '3rem' }}>
-      <p>General Hardness of water - <strong>{gH} GH</strong></p>
-      <Slider
-        aria-label="Always visible"
-        defaultValue={30}
-        step={null}
-        min={0}
-        max={180}
-        marks={gHMarks}
-        onChange={gHChange}
-      />
-    </Box>
+                  <IconButton edge="end" aria-label="delete" onClick={() => {
+                    setFishInTank(
+                      fishInTank.filter(f => f.name !== value.name)
+                    );
+                  }}>
+                    <DeleteIcon />
+                  </IconButton>                      
+                  </>
+            }
+            >
+              <ListItemAvatar>
+              <Badge badgeContent={value.count} color="primary">
+                <Avatar alt={value.name} src={value.imgSrc}></Avatar>
+              </Badge>
+              </ListItemAvatar>
+              <ListItemText
+                primary={value.name}
+                secondary={`${value.shortDesc} (${value.adultSizeCm}cm)`}
+              />
+            </ListItem>
+            ))}
+          </List>
+          :
+            <p>You currently have no fish in your tank.</p>
+          }
+        </AccordionDetails>
+      </Accordion>
+      <Accordion expanded={expanded === 'panel2'} onChange={handleChange('panel2')}>
+        <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
+          <Typography>Tank perameters</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+        <div className='slider-container'>
+            <p>Water temperature - <strong>{tempOfTank} °C</strong></p>
+            <Slider
+                aria-label="Always visible"
+                defaultValue={25}
+                step={1}
+                min={10}
+                max={30}
+                marks={tempMarks}
+                onChange={(e) => {setTempOfTank(e.target.value)}}
+                style={{marginBottom: "2.75rem"}}
+              />
 
-    <Box sx={{ width: 300, marginTop: '3rem' }}>
-      <p>Carbonate Hardness of water - <strong>{kH} KH</strong></p>
-      <Slider
-        aria-label="Always visible"
-        defaultValue={80}
-        step={null}
-        min={0}
-        max={240}
-        marks={kHMarks}
-        onChange={kHChange}
-      />
-    </Box>
+              <p>pH level of water - <strong>{pHOfTank} pH</strong></p>
+              <Slider
+                aria-label="Always visible"
+                defaultValue={6.4}
+                step={0.1}
+                min={6.4}
+                max={8.4}
+                marks={pHMarks}
+                onChange={(e) => {setPhOfTank(e.target.value)}}
+                style={{marginBottom: "2.75rem"}}
+              />
+
+              <p>Nitrite level of water - <strong>{nitrite} NO2</strong></p>
+              <Slider
+                aria-label="Always visible"
+                defaultValue={0}
+                step={0.5}
+                min={0}
+                max={3.0}
+                marks={nitriteMarks}
+                onChange={(e) => {setNitrite(e.target.value)}}
+                style={{marginBottom: "2.75rem"}}
+              />
+
+              <p>Nitrate level of water - <strong>{nitrate} NO3</strong></p>
+              <Slider
+                aria-label="Always visible"
+                defaultValue={0}
+                step={null}
+                min={0}
+                max={200}
+                marks={nitrateMarks}
+                onChange={(e) => {setNitrate(e.target.value)}}
+                style={{marginBottom: "2.75rem"}}
+              />
+     
+              <p>General Hardness of water - <strong>{gH} GH</strong></p>
+              <Slider
+                aria-label="Always visible"
+                defaultValue={30}
+                step={null}
+                min={0}
+                max={180}
+                marks={gHMarks}
+                onChange={(e) => {setGh(e.target.value)}}
+                style={{marginBottom: "2.75rem"}}
+              />
+         
+              <p>Carbonate Hardness of water - <strong>{kH} KH</strong></p>
+              <Slider
+                aria-label="Always visible"
+                defaultValue={80}
+                step={null}
+                min={0}
+                max={240}
+                marks={kHMarks}
+                onChange={(e) => {setKh(e.target.value)}}
+                style={{marginBottom: "2.75rem"}}
+              />
+        </div>
+        </AccordionDetails>
+      </Accordion>
+      <Accordion expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
+        <AccordionSummary aria-controls="panel3d-content" id="panel3d-header">
+          <Typography>Issues with your tank ({tankErrors.length})</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+        <Stack sx={{ width: '100%', marginBottom: '2.25rem' }} spacing={2}>
+          {tankErrors && tankErrors.map((error) => (
+            <Alert severity={error.severity}>{error.message}</Alert>
+          ))}
+        </Stack>
+        </AccordionDetails>
+      </Accordion>
+  </div>
+
+
+
+
+
+  {/* <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1-content"
+          id="panel1-header"
+          style={{backgroundColor: "lightgrey"}}
+        >
+          <strong>Tank parameters</strong>
+        </AccordionSummary>
+        <AccordionDetails>
+          <div className='accordion-settings'>
+
+            
+   
+          </div>
+
+
+        </AccordionDetails>
+  </Accordion> */}
+
+
+
+
 
   {/* https://1043140.app.netsuite.com/core/media/media.nl?id=510780&c=1043140&h=2dd845a564be718b9044&_xt=.pdf */}
 
         </form>
-      </div>
-      <div class="grid-item">
-        <List dense={dense}>
-          {fishInTank && fishInTank.map((value) => (
-            <ListItem
-              key={value.name}
-              style={{width: "475px"}}
-              secondaryAction={
-                <>
-                <IconButton edge="end" aria-label="add" onClick={() => addToTank(value, 1)}>
-                  <AddIcon />
-                </IconButton>
-
-                <IconButton edge="end" aria-label="remove"  onClick={() => addToTank(value, -1)}>
-                  <RemoveIcon />
-                </IconButton>
-
-                <IconButton edge="end" aria-label="delete" onClick={() => {
-                  setFishInTank(
-                    fishInTank.filter(f => f.name !== value.name)
-                  );
-                }}>
-                  <DeleteIcon />
-                </IconButton>                      
-                </>
-          }
-          >
-            <ListItemAvatar>
-            <Badge badgeContent={value.count} color="primary">
-              <Avatar alt={value.name} src={value.imgSrc}></Avatar>
-            </Badge>
-            </ListItemAvatar>
-            <ListItemText
-              primary={value.name}
-              secondary={`${value.shortDesc} (${value.adultSizeCm}cm)`}
-            />
-          </ListItem>
-          ))}
-        </List>
       </div>
     </div>
     </div>
